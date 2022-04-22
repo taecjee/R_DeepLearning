@@ -271,7 +271,7 @@ write.csv(trees, "data/out2.csv", quote = FALSE, row.names = FALSE)
 install.packages("readr")
 library(readr)
 
-read_csv("data/data6.txt")
+read_csv("data/data2.txt")
 
 # Excel 파일 불러오기
 install.packages("xlsx")
@@ -296,6 +296,10 @@ install.packages("dplyr")
 library(dplyr)
 
 filter(mtcars, mpg >= 30)
+
+idx <- which(mtcars$mpg >= 30)
+mtcars[idx,]
+
 filter(mtcars, mpg >= 30 & wt < 1.8)
 
 filter(mtcars, mpg <= 30 & (cyl == 6 | cyl == 8) & am == 1)
@@ -307,6 +311,7 @@ filter(mtcars, between(mpg, median(mpg), quantile(mpg, probs = 0.75)))
 
 # 관찰값의 단순 임의 추출
 sample_n(mtcars, size = 3)
+nrow(mtcars)
 sample_frac(mtcars, size = 0.1)
 
 myIdx <- sample(1:nrow(mtcars), size = 3)
