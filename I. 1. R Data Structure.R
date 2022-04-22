@@ -290,6 +290,7 @@ xls2
 xls3 <- read_excel(xls_file)
 head(xls3)
 
+## dplyr
 # 조건에 따른 관찰값의 선택
 
 install.packages("dplyr")
@@ -340,7 +341,7 @@ select(mtcars, starts_with("d"))
 select(mtcars, ends_with("t"))
 select(mtcars, contains("a"))
 
-#
+# 변수의 선택, 변수 이름 수정
 select(mtcars, contains("ar", ignore.case = FALSE))
 
 select(mtcars, -starts_with("d"))
@@ -383,6 +384,7 @@ mtcars %>%
             avg_mpg = mean(mpg),
             avg_kml = mean(kml))
 
+## tidyr
 # gather로 tidy 데이터 만들기
 
 install.packages("tidyr")
@@ -400,12 +402,16 @@ table4a %>%
   arrange(country)
 
 # spread로 tidy 데이터 만들기
+table1
+
 table2
 
 table2 %>% 
   spread(key = type, value = count)
 
 # separate로 tidy 데이터 만들기
+table1
+
 table3
 
 table3 %>% 
@@ -420,6 +426,8 @@ table3 %>%
            convert = TRUE)
 
 # unite로 데이터 다루기
+table1
+
 table5
 
 table5 %>% 
@@ -431,6 +439,7 @@ table5 %>%
            convert = TRUE) %>% 
   mutate(year = as.integer(year))
 
+## 데이터 결합
 # Mutating joins
 band_members
 band_instruments
@@ -472,6 +481,8 @@ df_y <- tibble(y1 = LETTERS[4:6],
 
 bind_cols(df_x, df_y)
 
+bind_rows(df_x, df_y)
+
 df_z <- tibble(x1 = LETTERS[4:6],
                x2 = 4:6)
 
@@ -505,12 +516,14 @@ trees_sub1 <- trees %>%
   filter(Girth >= mean(Girth), 
          Height < mean(Height)) %>% 
   select(Girth, Height)
+trees_sub1
 
 # Girth 값이 평균 미만이고, Height 값이 평균 이상인 데이터를 선택하여, trees_sub2에 저장. 변수는 Girth, Height 만 선택.
 trees_sub2 <- trees %>% 
   filter(Girth < mean(Girth), 
          Height >= mean(Height)) %>% 
   select(Girth, Height)
+trees_sub2
 
 # trees_sub1과 trees_sub2의 Girth와 Height의 평균값 및 케이스 값 계산.
 trees_sub1 %>%
@@ -533,7 +546,7 @@ mtcars %>%
             avg_wt = mean(wt))
 
 
-# 다음의 두 데이터 프레임 생성
+# 다음의 두 데이터 프레임 (tibble) 생성
 part_df <- tibble(num = c(155, 501, 244, 796),
                   tool = c("screwdrive", "pliers", "wrench", "hammer"))
 part_df
