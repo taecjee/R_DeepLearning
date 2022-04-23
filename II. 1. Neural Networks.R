@@ -33,7 +33,7 @@ im_numbers <- apply(im, 2, as.numeric)
 image(1:28, 1:28, im_numbers, col=gray((255:0)/255))
 
 ## MNIST 데이터 시각화 함수
-img <- function(d, row_index){
+img_mnist <- function(d, row_index){
   # 행을 숫자 벡터로 변경
   r <- as.numeric(d[row_index, 2:785])
   # 행렬 선언 및 데이터 적재
@@ -47,13 +47,13 @@ img <- function(d, row_index){
   image(x = 1:28, y = 1:28, z = im, col=gray((255:0)/255), main = paste("Number:", d[row_index, 1]))
 }
 
-img(mnist.train, 4)
+img_mnist(mnist.train, 4)
 
 ## 여러 이미지 시각화
 par(mfcol = c(6, 6))
 par(mar = c(1, 0, 3, 0), xaxs='i', yaxs='i')
 for (idx in 1:36) { 
-  img(mnist.train, idx)
+  img_mnist(mnist.train, idx)
 }
 par(mfcol = c(1, 1))
 par(mar = c(5.1, 4.1, 4.1, 2.1), xaxs='r', yaxs='r')
@@ -72,6 +72,10 @@ table(digits_nn$y)
 set.seed(42)
 sample <- sample(nrow(digits_nn), nrow(digits_nn) * 0.8)
 test <- setdiff(seq_len(nrow(digits_nn)), sample)
+
+nrow(digits_nn)
+length(sample)
+length(test)
 
 ## 열의 값이 모두 같은 경우 제거
 var(digits_nn[sample, 1], na.rm = TRUE)
@@ -92,6 +96,7 @@ plot(cumprop, type = "l", main = "Cumulative sum", xlab = "PCA component")
 
 # selects out the principal components that account for 50% of our variance
 num_cols <- min(which(cumprop > 0.5))
+num_cols
 cumprop[num_cols]
 
 
@@ -222,7 +227,7 @@ tic <- proc.time()
 digits.m3 <- caret::train(digits.X, digits.y,
                           method = "nnet",
                           tuneGrid = expand.grid(
-                            .size = c(40),
+                            .size = c(20),
                             .decay = 0.1
                           ),
                           trControl = trainControl(method = "none"),
@@ -243,7 +248,7 @@ caret::confusionMatrix(xtabs(~digits.yhat3 + digits.test.y))
 
 
 ## RSNNS를 이용한 데이터 분류 (Stuttgart Neural Networks Simulator)
-install.packages("RSNNS")
+#install.packages("RSNNS")
 library(RSNNS)
 
 # one-hot encoding
@@ -274,6 +279,16 @@ table(digits.test.y, digits.yhat4)
 ## 실환경에서 데이터 예측 방법 1
 digits.yhat4_b <- predict(digits.m4, newdata = digits.test.X)
 head(round(digits.yhat4_b, 2))
+
+maxCol <- max.col(digits.yhat4_b)
+maxData <- c()
+for(idx in 1:length(maxCol)) {
+  maxData[idx] <- digits.yhat4_b[idx, maxCol[idx]]
+}
+head(maxData)
+min(maxData)
+which.min(maxData)
+digits.yhat4_b[26,]
 
 digits.yhat4_b_1 <- encodeClassLabels(digits.yhat4_b, method = "WTA", l = 0, h = 0)
 table(digits.yhat4_b_1)
@@ -357,9 +372,9 @@ shrinkage <- rbind(cbind(Size = 5, Sample = "In",
                          as.data.frame(t(n10.insample$overall[measures]))),
                    cbind(Size = 10, Sample = "Out",
                          as.data.frame(t(n10.outsample$overall[measures]))),
-                   cbind(Size = 40, Sample = "In",
+                   cbind(Size = 20, Sample = "In",
                          as.data.frame(t(n40.insample$overall[measures]))),
-                   cbind(Size = 40, Sample = "Out",
+                   cbind(Size = 20, Sample = "Out",
                          as.data.frame(t(n40.outsample$overall[measures]))),
                    cbind(Size = 40, Sample = "In",
                          as.data.frame(t(n40b.insample$overall[measures]))),

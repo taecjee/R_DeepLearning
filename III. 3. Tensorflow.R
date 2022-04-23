@@ -38,11 +38,14 @@ loss <- tf$reduce_mean((y_pred-y_var)^2)
 # create optimizer
 optimizer <- tf$compat$v1$train$GradientDescentOptimizer(0.6)
 train <- optimizer$minimize(loss)
+#sgd <- tf$keras$optimizers$SGD(0.6)
+#sgd$minimize(loss)
 
 # 모델 실행
 # create TensorFlow session and initialize variables
-sess = tf$Session()
-sess$run(tf$global_variables_initializer())
+sess = tf$compat$v1$Session()
+init <- sess$run(tf$compat$v1$global_variables_initializer())
+sess$run(init)
 # solve the regression
 for (step in 0:80) {
   if (step %% 10 == 0)

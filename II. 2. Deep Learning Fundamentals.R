@@ -28,9 +28,9 @@ test.y <- digits.train[test, 1]
 ## try various weight decays and number of iterations
 ## register backend so that different decays can be
 ## estimated in parallel
-install.packages("deepnet")
+#install.packages("deepnet")
 library(parallel)
-install.packages("doSNOW")
+#install.packages("doSNOW")
 library(doSNOW)
 cl <- makeCluster(5)
 clusterEvalQ(cl, {source("II. 2. cluster_inc.R")})
