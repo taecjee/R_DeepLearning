@@ -1,7 +1,4 @@
 # 딥러닝 모델
-library(mxnet)
-
-?mx.model.FeedForward.create
 
 # Weight Decay
 set.seed(1234)
@@ -37,6 +34,7 @@ clusterEvalQ(cl, {source("II. 2. cluster_inc.R")})
 registerDoSNOW(cl)
 
 # 신경회로망 학습
+library(caret)
 set.seed(1234)
 digits.decay.m1 <- lapply(c(100, 150), function(its) {
   caret::train(digits.X, digits.y,
@@ -45,8 +43,8 @@ digits.decay.m1 <- lapply(c(100, 150), function(its) {
                  .size = c(10),
                  .decay = c(0, .1)),
                trControl = caret::trainControl(method="cv", number=5,
-                                               repeats=1),
-               MaxNWts = 10000,
+                                   repeats=1),
+               MaxNWts = 50000,
                maxit = its)
 })
 
@@ -61,6 +59,8 @@ d <- data.frame(x = rnorm(400))
 d$y <- with(d, rnorm(400, 2 + ifelse(x < 0, x + x^2, x + x^2.5), 1))
 d.train <- d[1:200, ]
 d.test <- d[201:400, ]
+plot(d.train$x, d.train$y)
+
 ## three different models
 m1 <- lm(y ~ x, data = d.train)
 m2 <- lm(y ~ I(x^2), data = d.train)
