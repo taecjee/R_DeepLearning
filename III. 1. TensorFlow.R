@@ -1,5 +1,11 @@
 library(keras)
 
+library(tensorflow)
+
+## GPU 사용 - 메모리 관리
+gpus <- tf$config$experimental$list_physical_devices("GPU")
+tf$config$experimental$set_memory_growth(gpus[[1]], TRUE)
+
 # MNIST 데이터 로딩
 mnist <- dataset_mnist()
 image(mnist$train$x[1,,])
