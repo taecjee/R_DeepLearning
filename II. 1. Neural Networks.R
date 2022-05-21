@@ -59,6 +59,7 @@ par(mfcol = c(1, 1))
 par(mar = c(5.1, 4.1, 4.1, 2.1), xaxs='r', yaxs='r')
 
 ## 문제 단순화
+#install.packages("dplyr")
 library(dplyr)
 digits_nn <- mnist.train[(mnist.train$label == 5) | (mnist.train$label == 6),]
 digits_nn <- mnist.train %>% filter(label %in% c(5, 6))
@@ -177,7 +178,7 @@ digits.m1 <- caret::train(digits.X, digits.y,
                           method = "nnet",
                           tuneGrid = expand.grid(
                             .size = c(5),
-                            .decay = c(0.1)),
+                            .decay = c(0.05)),
                           trControl = trainControl(method = "none"),
                           MaxNWts = 10000,
                           maxit = 100)
@@ -288,7 +289,7 @@ for(idx in 1:length(maxCol)) {
 head(maxData)
 min(maxData)
 which.min(maxData)
-digits.yhat4_b[26,]
+digits.yhat4_b[72,]
 
 digits.yhat4_b_1 <- encodeClassLabels(digits.yhat4_b, method = "WTA", l = 0, h = 0)
 table(digits.yhat4_b_1)

@@ -43,11 +43,17 @@ model %>%
 predictions <- predict(model, mnist$test$x)
 head(predictions, 2)
 
+library(RSNNS)
+mnist.test.yhat <- encodeClassLabels(predictions, method = "WTA", l = 0, h = 0.8) - 1
+table(mnist$test$y, mnist.test.yhat)
+mnist.test.yhat2 <- encodeClassLabels(predictions) - 1
+caret::confusionMatrix(xtabs(~as.matrix(mnist$test$y) + as.matrix(mnist.test.yhat2)))
+
 model %>% 
   evaluate(mnist$test$x, mnist$test$y, verbose = 0)
 
 # 모델 저장 및 재사용
-save_model_tf(object = model, filepath = "model")
+save_model_tf(object = model, filepath = "model/ver2")
 
-reloaded_model <- load_model_tf("model")
+reloaded_model2 <- load_model_tf("model/ver2")
 all.equal(predict(model, mnist$test$x), predict(reloaded_model, mnist$test$x))

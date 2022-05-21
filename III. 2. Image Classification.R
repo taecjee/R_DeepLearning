@@ -81,16 +81,16 @@ model %>% compile(
 )
 
 ## 모델 학습
-model %>% fit(train_images, train_labels, epochs = 5, verbose = 2)
+model %>% fit(train_images, train_labels, epochs = 5, verbose = 1)
 
-model %>% fit(train_images, train_labels, validation_split = .3, epochs = 5, verbose = 2)
+model %>% fit(train_images, train_labels, validation_split = .3, epochs = 5, verbose = 1)
 
 ## 모델 평가
 score <- model %>% evaluate(test_images, test_labels, verbose = 0)
 
-cat('Test loss:', score$loss, "\n")
+cat('Test loss:', score["loss"], "\n")
 
-cat('Test accuracy:', score$acc, "\n")
+cat('Test accuracy:', score["accuracy"], "\n")
 
 ## 예측
 # 테스트 이미지들에 대한 예측
@@ -98,11 +98,14 @@ predictions <- model %>% predict(test_images)
 
 predictions[1, ]
 
-# 레이블은 0부터 시작, R은 1부터 시작해서 1이 큼
+# 레이블은 0부터 시작, R 인덱스는 1부터 시작해서 1이 큼
 which.max(predictions[1, ])
 
 class_pred <- model %>% predict(test_images) %>% k_argmax()
 class_pred[1:20]
+
+class_pred2 <- RSNNS::encodeClassLabels(predictions) - 1
+class_pred2[1:20]
 
 test_labels[1]
 
@@ -112,7 +115,8 @@ for (i in 1:25) {
   img <- test_images[i, , ]
   img <- t(apply(img, 2, rev)) 
   # subtract 1 as labels go from 0 to 9
-  predicted_label <- which.max(predictions[i, ]) - 1
+  #predicted_label <- which.max(predictions[i, ]) - 1
+  predicted_label <- RSNNS::encodeClassLabels(matrix(predictions[i, ], nrow = 1), "WTA", h = 0.8, l = 0.2) - 1
   true_label <- test_labels[i]
   if (predicted_label == true_label) {
     color <- '#008800' 
@@ -129,6 +133,7 @@ par(mfcol=c(1,1))
 # 단일 이미지에 대한 예측
 # Grab an image from the test dataset
 # take care to keep the batch dimension, as this is expected by the model
+img <- test_images[1, , ]
 img <- test_images[1, , , drop = FALSE]
 dim(img)
 
@@ -140,6 +145,10 @@ which.max(predictions) - 1
 
 class_pred <- model %>% predict(img) %>% k_argmax()
 class_pred
+
+k_argmax(predictions)
+
+RSNNS::encodeClassLabels(matrix(predictions, nrow = 1)) - 1
 
 test_labels[1]
 table(test_labels)
