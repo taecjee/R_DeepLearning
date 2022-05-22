@@ -21,6 +21,7 @@ cifar <- dataset_cifar10()
 class_names <- c('airplane', 'automobile', 'bird', 'cat', 'deer',
                  'dog', 'frog', 'horse', 'ship', 'truck')
 
+# 30개 살펴 보기
 index <- 1:30
 
 par(mfcol = c(5,6), mar = rep(1, 4), oma = rep(0.2, 4))
@@ -30,6 +31,12 @@ cifar$train$x[index,,,] %>%
   purrr::map(as.raster, max = 255) %>%
   purrr::iwalk(~{plot(.x); title(.y)})
 par(mfcol = c(1,1))
+
+#######
+install.packages("imager")
+library(imager)
+
+plot(as.cimg(cifar$train$x[1,,,]))
 
 # 모델 생성
 # Convolution 레이어
@@ -113,6 +120,8 @@ c(test_images, test_labels) %<-% fashion_mnist$test
 dim(train_images)
 dim(test_images)
 
+plot(as.cimg(train_images[1,,]))
+
 train_images2 <- array_reshape(train_images, dim = c(60000, 28, 28, 1))
 dim(train_images2)
 test_images2 <- array_reshape(test_images, dim = c(10000, 28, 28, 1))
@@ -162,3 +171,4 @@ res2 <- data.frame(cbind(test_labels, preds2.array))
 table(res2)
 accuracy2 <- sum(res2$test_labels == res2$preds2.array) / nrow(res2)
 accuracy2
+
