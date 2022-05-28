@@ -102,7 +102,7 @@ model <- build_model()
 history <- model %>% fit(
   x = train_df %>% select(-label),
   y = train_df$label,
-  epochs = 500,
+  epochs = 200,
   validation_split = 0.2,
   verbose = 0,
   callbacks = list(print_dot_callback)
