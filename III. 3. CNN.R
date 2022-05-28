@@ -33,7 +33,7 @@ cifar$train$x[index,,,] %>%
 par(mfcol = c(1,1))
 
 #######
-install.packages("imager")
+#install.packages("imager")
 library(imager)
 
 plot(as.cimg(cifar$train$x[1,,,]))
@@ -65,13 +65,22 @@ model %>% compile(
   metrics = "accuracy"
 )
 
+#history <- model %>% 
+#  fit(
+#    x = cifar$train$x, y = cifar$train$y,
+#    epochs = 10,
+#    validation_data = unname(cifar$test),
+#    verbose = 2
+#  )
+
 history <- model %>% 
   fit(
     x = cifar$train$x, y = cifar$train$y,
-    epochs = 10,
-    validation_data = unname(cifar$test),
-    verbose = 2
+    epochs = 20,
+    validation_split = .3,
+    verbose = 1
   )
+
 
 # 모델 평가
 plot(history)
@@ -109,6 +118,8 @@ evaluate(model, cifar$train$x, cifar$train$y, verbose = 0)
 ##########################################
 ## 연습문제
 ##########################################
+library(reticulate)
+library(tensorflow)
 library(keras)
 
 # 데이터 준비
@@ -153,12 +164,12 @@ model %>% compile(
   metrics = "accuracy"
 )
 
-history <- model %>% 
+history2 <- model %>% 
   fit(
     x = train_images2, y = train_labels,
     epochs = 10,
     validation_split = 0.3,
-    verbose = 2
+    verbose = 1
   )
 
 # 모델 평가
