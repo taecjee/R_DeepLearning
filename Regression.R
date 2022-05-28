@@ -1,4 +1,5 @@
 library(keras)
+library(tensorflow)
 library(tfdatasets)
 
 # The Boston Housing Prices dataset
@@ -72,7 +73,7 @@ build_model <- function() {
   output <- input %>% 
     layer_dense_features(dense_features(spec)) %>% 
     layer_dense(units = 64, activation = "relu") %>%
-    layer_dense(units = 64, activation = "relu") %>%
+    layer_dense(units = 32, activation = "relu") %>%
     layer_dense(units = 1) 
   
   model <- keras_model(input, output)
@@ -107,12 +108,12 @@ history <- model %>% fit(
   callbacks = list(print_dot_callback)
 )
 
-library(ggplot2)
+#library(ggplot2)
 
 plot(history)
 
 # The patience parameter is the amount of epochs to check for improvement.
-early_stop <- callback_early_stopping(monitor = "val_loss", patience = 20)
+early_stop <- callback_early_stopping(monitor = "val_loss", patience = 30)
 
 model <- build_model()
 
@@ -137,3 +138,10 @@ test_predictions[ , 1]
 test_df$label
 
 sum(sqrt((test_df$label - test_predictions[,1])^2)) / length(test_df$label)
+
+test_result <- data.frame(Y <- test_df$label,
+                          Y_hat <- test_predictions[,1])
+
+ggplot(test_result, aes(x = Y, y = Y_hat)) +
+  geom_point() +
+  geom_line(aes(x = Y, y = Y, col = "red"))

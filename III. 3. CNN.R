@@ -76,7 +76,7 @@ model %>% compile(
 history <- model %>% 
   fit(
     x = cifar$train$x, y = cifar$train$y,
-    epochs = 20,
+    epochs = 12,
     validation_split = .3,
     verbose = 1
   )
@@ -183,3 +183,137 @@ table(res2)
 accuracy2 <- sum(res2$test_labels == res2$preds2.array) / nrow(res2)
 accuracy2
 
+
+#########################
+# 모델 생성
+# Convolution 레이어
+l2_cifar_model <- keras_model_sequential() %>% 
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu", 
+                input_shape = c(32,32,3),
+                kernel_regularizer = regularizer_l2(l = 0.001)) %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu",
+                kernel_regularizer = regularizer_l2(l = 0.001)) %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu",
+                kernel_regularizer = regularizer_l2(l = 0.001))
+
+summary(l2_cifar_model)
+
+# Dense 레이어
+l2_cifar_model %>% 
+  layer_flatten() %>% 
+  layer_dense(units = 64, activation = "relu",
+              kernel_regularizer = regularizer_l2(l = 0.001)) %>% 
+  layer_dense(units = 10, activation = "softmax")
+
+summary(l2_cifar_model)
+
+# 모델 학습
+l2_cifar_model %>% compile(
+  optimizer = "adam",
+  loss = "sparse_categorical_crossentropy",
+  metrics = "accuracy"
+)
+
+l2_cifar_history <- l2_cifar_model %>% 
+  fit(
+    x = cifar$train$x, y = cifar$train$y,
+    epochs = 10,
+    validation_split = .3,
+    verbose = 1
+  )
+
+# 모델 평가
+evaluate(l2_cifar_model, cifar$test$x, cifar$test$y, verbose = 1)
+
+evaluate(l2_cifar_model, cifar$train$x, cifar$train$y, verbose = 1)
+
+#########################
+# 모델 생성 - drop out
+# Convolution 레이어
+drop_cifar_model <- keras_model_sequential() %>% 
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu", 
+                input_shape = c(32,32,3)) %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu") %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu")
+
+summary(drop_cifar_model)
+
+# Dense 레이어
+drop_cifar_model %>% 
+  layer_flatten() %>% 
+  layer_dense(units = 64, activation = "relu") %>% 
+  layer_dropout(0.2) %>%
+  layer_dense(units = 10, activation = "softmax")
+
+summary(drop_cifar_model)
+
+# 모델 학습
+drop_cifar_model %>% compile(
+  optimizer = "adam",
+  loss = "sparse_categorical_crossentropy",
+  metrics = "accuracy"
+)
+
+drop_cifar_history <- drop_cifar_model %>% 
+  fit(
+    x = cifar$train$x, y = cifar$train$y,
+    epochs = 10,
+    validation_split = .3,
+    verbose = 1
+  )
+
+# 모델 평가
+evaluate(drop_cifar_model, cifar$test$x, cifar$test$y, verbose = 1)
+
+evaluate(drop_cifar_model, cifar$train$x, cifar$train$y, verbose = 1)
+
+
+#########################
+# 모델 생성 - l2_drop out
+# Convolution 레이어
+l2_drop_cifar_model <- keras_model_sequential() %>% 
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu", 
+                input_shape = c(32,32,3),
+                kernel_regularizer = regularizer_l2(l = 0.001)) %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu",
+                kernel_regularizer = regularizer_l2(l = 0.001)) %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu",
+                kernel_regularizer = regularizer_l2(l = 0.001))
+
+summary(l2_drop_cifar_model)
+
+# Dense 레이어
+l2_drop_cifar_model %>% 
+  layer_flatten() %>% 
+  layer_dense(units = 64, activation = "relu",
+              kernel_regularizer = regularizer_l2(l = 0.001)) %>% 
+  layer_dropout(0.2) %>%
+  layer_dense(units = 10, activation = "softmax")
+
+summary(l2_drop_cifar_model)
+
+# 모델 학습
+l2_drop_cifar_model %>% compile(
+  optimizer = "adam",
+  loss = "sparse_categorical_crossentropy",
+  metrics = "accuracy"
+)
+
+l2_drop_cifar_history <- l2_drop_cifar_model %>% 
+  fit(
+    x = cifar$train$x, y = cifar$train$y,
+    epochs = 10,
+    validation_split = .3,
+    verbose = 1
+  )
+
+# 모델 평가
+evaluate(l2_drop_cifar_model, cifar$test$x, cifar$test$y, verbose = 1)
+
+evaluate(l2_drop_cifar_model, cifar$train$x, cifar$train$y, verbose = 1)
